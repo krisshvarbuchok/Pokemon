@@ -11,14 +11,12 @@ import axios from "axios";
 //     return data.count
 // })
 
-const getPokemon = async (pokemonsPerPage, offset) => {
-    // console.log(position, offset);
-
-    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/?limit=${10}&offset=${10}`);
+const getPokemon = async () => {
+    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=20`);
     return response.data.results;
 }
-const fetchGetPokemon = createAsyncThunk('list/fetchGetPokemon', async (pokemonsPerPage, offset) => {
-    const data = await getPokemon(pokemonsPerPage, offset);
+const fetchGetPokemon = createAsyncThunk('list/fetchGetPokemon', async () => {
+    const data = await getPokemon();
     return data;
 })
 const getMoreAboutPokemon = async (name) => {

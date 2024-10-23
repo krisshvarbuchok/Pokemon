@@ -13,12 +13,13 @@ function App() {
   console.log(data);
 
   useEffect(() => {
-      dispatch(fetchGetPokemon()).unwrap();
+      dispatch(fetchGetPokemon());
   }, [])
   const handleClick = () => {
-      data.forEach(pokemon => {
-        dispatch(fetchGetMoreAboutPokemon(pokemon.name))
-    })
+    //dispatch(fetchGetPokemon());
+    //   data.forEach(pokemon => {
+    //     dispatch(fetchGetMoreAboutPokemon(pokemon.name))
+    // })
   }
 
   return (
