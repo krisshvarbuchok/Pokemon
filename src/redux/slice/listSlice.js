@@ -13,19 +13,21 @@ import axios from "axios";
 
 const getPokemon = async () => {
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=20`);
-    return response.data.results;
+    return {results: response.data.results, count:response.data.count};
 }
 const fetchGetPokemon = createAsyncThunk('list/fetchGetPokemon', async () => {
     const data = await getPokemon();
+    //console.log(data);
+    
     return data;
 })
-const getMoreAboutPokemon = async (name) => {
-    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}/`);
-    //console.log('response', response.data);
-    return response.data;
+const getMoreAboutPokemon = async (url) => {
+    const response = await axios.get(url);
+    console.log('response', response.data);
+    return {name: response.data.name, img: response.data.sprites.front_default};
 }
-const fetchGetMoreAboutPokemon = createAsyncThunk('info/fetchGetMoreAboutPokemon', async (name) => {
-    const data = await getMoreAboutPokemon(name);
+const fetchGetMoreAboutPokemon = createAsyncThunk('info/fetchGetMoreAboutPokemon', async (url) => {
+    const data = await getMoreAboutPokemon(url);
     console.log('data', data);
     return data;
 })
@@ -46,8 +48,12 @@ const listSlice = createSlice({
                 state.status = 'loading'
             })
             .addCase(fetchGetPokemon.fulfilled, (state, action) => {
+                const {results, count} = action.payload
+                console.log(count);
+                
                 state.status = 'succeeded'
-                state.data = action.payload
+                state.data = results
+                state.count = count
             })
             .addCase(fetchGetPokemon.rejected, (state, action) => {
                 state.error = 'failed'
@@ -57,8 +63,9 @@ const listSlice = createSlice({
                 state.status = 'loading'
             })
             .addCase(fetchGetMoreAboutPokemon.fulfilled, (state, action) => {
+                const {name, img} = action.payload
                 state.status = 'succeeded'
-                state.info.push(action.payload)
+                state.info.push({name: name, [name]: img});
             })
     }
 })

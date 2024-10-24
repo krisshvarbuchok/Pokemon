@@ -5,17 +5,20 @@ import { fetchGetMoreAboutPokemon, fetchGetPokemon } from "../redux/slice/listSl
 const ContentPagination = () => {
     const { data } = useSelector(state => state.list);
     console.log(data);
-    //const { info } = useSelector(state => state.list);
+   // const {count} = useSelector( state => state.list);
+   // console.log(count);
+    
+    const { info } = useSelector(state => state.list);
    
-    //console.log('info', info);
+    console.log('info', info);
     const dispatch = useDispatch();
 
     const itemsPerPage = 5;//элементов на странице
     const [currentPage, setCurrentPage] = useState(1);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const currentItems = data.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(data.length / itemsPerPage);
+    const currentItems = info.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(info.length / itemsPerPage);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -29,10 +32,10 @@ const ContentPagination = () => {
                     return <li key={item.name} className="element">
                         <p>{item.name}</p>
 
-                        {/* <img
-                            src={info[item.name]?.imgs}
+                        <img
+                            src={item[item.name]}
                             alt={item.name}
-                        /> */}
+                        />
                     </li>
                 })}
 

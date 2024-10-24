@@ -14,20 +14,20 @@ function App() {
 
   useEffect(() => {
       dispatch(fetchGetPokemon());
-  }, [])
-  const handleClick = () => {
-    //dispatch(fetchGetPokemon());
-    //   data.forEach(pokemon => {
-    //     dispatch(fetchGetMoreAboutPokemon(pokemon.name))
-    // })
-  }
+    }, [dispatch]);
+    useEffect(()=>{
+      data.forEach(item => dispatch(fetchGetMoreAboutPokemon(item.url)))
+    }, [data, dispatch])
+  // const handleClick = () => {
+  
+  // }
 
   return (
     <div className='container'>
       <div className='display'>
         <div className='pokemons' onClick={() => dispatch(changeNavigation(''))}><p className='stylePokemon'>Покемоны</p></div>
         <div className='styleButton'>
-          <button className='button' onClick={() => handleClick()}>Показать всех покемонов</button>
+          {/* <button className='button' onClick={() => handleClick()}>Показать всех покемонов</button> */}
         </div>
         <div className='panel'>
           <div className={navigation === 'pagination' ? 'active' : 'navigationPanel'} onClick={() => dispatch(changeNavigation('pagination'))}>Пагинация</div>
