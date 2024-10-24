@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { clearInfo, fetchGetMoreAboutPokemon, fetchGetPokemon } from "../redux/slice/listSlice";
+import { clearInfo, fetchGetPokemon } from "../redux/slice/listSlice";
 import {LIMIT, OFFSET} from '../App';
 
 const ContentPagination = () => {
-    const { data } = useSelector(state => state.list);
-    console.log(data);
+    //const { data } = useSelector(state => state.list);
+    //console.log(data);
     const {count} = useSelector( state => state.list);
    // console.log(count);
     
     const { info } = useSelector(state => state.list);
    
-    console.log('info', info);
+    //console.log('info', info);
     const dispatch = useDispatch();
 
     const itemsPerPage = LIMIT;//элементов на странице
@@ -23,7 +23,7 @@ const ContentPagination = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        console.log('object', {limit: LIMIT, offset: OFFSET * page});
+        //console.log('object', {limit: LIMIT, offset: OFFSET * page});
         dispatch(clearInfo())
         dispatch(fetchGetPokemon({limit: LIMIT, offset: OFFSET * page}))
       };
@@ -34,7 +34,7 @@ const ContentPagination = () => {
         <div className="list">
             <ul>
                 {info.map(item => {
-                    return <li key={item[item.name.id]} className="element">
+                    return <li key={item[item.name].id} className="element">
                         <p>{item.name}</p>
 
                         <img

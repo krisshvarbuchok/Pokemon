@@ -13,31 +13,28 @@ function App() {
   const navigation = useSelector(state => state.navigation);
   const dispatch = useDispatch();
   const { data } = useSelector(state => state.list);
-  console.log(data);
+  //console.log(data);
 
   useEffect(() => {
       dispatch(fetchGetPokemon({limit: LIMIT, offset: OFFSET}));
-    }, [dispatch]);
+    }, []);
     useEffect(()=>{
       data.forEach(item => dispatch(fetchGetMoreAboutPokemon(item.url)))
     }, [data, dispatch])
-  // const handleClick = () => {
-  
-  // }
+
 
   return (
     <div className='container'>
       <div className='display'>
         <div className='pokemons' onClick={() => dispatch(changeNavigation(''))}><p className='stylePokemon'>Покемоны</p></div>
         <div className='styleButton'>
-          {/* <button className='button' onClick={() => handleClick()}>Показать всех покемонов</button> */}
         </div>
         <div className='panel'>
           <div className={navigation === 'pagination' ? 'active' : 'navigationPanel'} onClick={() => dispatch(changeNavigation('pagination'))}>Пагинация</div>
           <div className={navigation === 'infiniteScroll' ? 'active' : 'navigationPanel'} onClick={() => dispatch(changeNavigation('infiniteScroll'))}>Бесконечная прокрутка</div>
         </div>
         {navigation === 'pagination' && <ContentPagination />}
-        {/* {navigation === 'infiniteScroll' && <ContentInfiniteScroll />} */}
+        {navigation === 'infiniteScroll' && <ContentInfiniteScroll />}
       </div>
     </div >
   )

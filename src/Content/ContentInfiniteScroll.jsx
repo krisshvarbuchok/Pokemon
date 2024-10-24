@@ -1,118 +1,85 @@
-import { fetchGetMoreAboutPokemon, fetchGetPokemon } from "../redux/slice/listSlice";
+import React, { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Space } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { Avatar, List, message } from 'antd';
-import VirtualList from 'rc-virtual-list';
+import { LIMIT, OFFSET } from '../App';
+import { clearInfo, fetchGetMoreAboutPokemonScroll, fetchGetPokemon, fetchGetPokemonForScroll } from "../redux/slice/listSlice";
 
-const fakeDataUrl = 'https://pokeapi.co/api/v2/pokemon/';
-const ContainerHeight = 400;
+
+const style = {
+    height: 60,
+    border: "1px solid green",
+    margin: 6,
+    padding: 8
+};
 
 const ContentInfiniteScroll = () => {
-    const [data, setData] = useState([]);
-    const [messageApi, contextHolder] = message.useMessage();
-    //const { data } = useSelector(state => state.list);
-    //console.log(data);
-    const { info } = useSelector(state => state.list);
     const dispatch = useDispatch();
-    //const itemsPerLoad = 10;
-    //const [loadedItems, setLoadedItems] = useState(itemsPerLoad);
-    //const [dataState, setData] = useState([]); // Ваши данные
-    //console.log('dataState', dataState);
+    const { infoScroll } = useSelector(state => state.list);
+    const {dataScroll} = useSelector(state => state.list);
+    const [data, setData] = useState([]);
+    const [offset, setOffset] = useState(5);
+    console.log('dataScroll' , dataScroll);
+    
+    console.log('infoScroll',infoScroll);
+    console.log('data in scroll', data);
 
-    const appendData = () => {
-        fetch(fakeDataUrl)
-            .then((res) => res.json())
-            .then((body) => {
-                setData(data.concat(body.results));
-                message.success(`${body.results.length} more items loaded!`);
-            });
+
+    const fetchMoreData = () => {
+        console.log('secound');
+        
+        console.log('offset', offset);
+        console.log('--------------------------------------');
+        setData((data) => [...data, ...infoScroll])
+        
+        dispatch(fetchGetPokemonForScroll({ limit: 5, offset: offset }))
+        setOffset((offset) => offset + 5)
+        
     };
+    useEffect(()=>{
+        dataScroll.forEach(item => dispatch(fetchGetMoreAboutPokemonScroll(item.url)))
+    }, [dataScroll, dispatch])
+   
     useEffect(() => {
-        appendData();
-    }, []);
+        console.log('first');
+        setData((data) => [...data, ...infoScroll])
+        //dispatch(clearInfo())
+        fetchMoreData()
+    }, [dispatch])
 
-    const onScroll = (e) => {
-        // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
-        if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
-            appendData();
-        }
-    };
-
-    const success = () => {
-        messageApi.open({
-            type: 'success',
-            content: '10 покемонов',
-        });
-    };
-
-    // const loadMoreItems = () => {
-    //     setLoadedItems((prevLoaded) => prevLoaded + itemsPerLoad);
+    // const success = () => {
+    //     messageApi.open({
+    //         type: 'success',
+    //         content: '10 покемонов',
+    //     });
     // };
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const newData = await dispatch(fetchGetPokemon({position: 100, offset: itemsPerLoad})).unwrap()
-    //             setData((prev) => [...prev, ...newData])
-    //             data.forEach(pokemon => {
-    //                 dispatch(fetchGetMoreAboutPokemon(pokemon.name))
-    //             })
-    //         }
-    //         catch (e) {
-    //             console.log(e);
 
-    //         }
-    //     }
-    //     fetchData()
-    // }
-    //     , []);
 
 
 
 
     return (
         <>
-            <List>
-                <VirtualList
-                    data={data}
-                    height={ContainerHeight}
-                    itemHeight={47}
-                    
-                    onScroll={onScroll}
+            <div>
+                <InfiniteScroll
+                    dataLength={data.length}
+                    next={fetchMoreData}
+                    hasMore={true}
+                    loader={<h4>Loading...</h4>}
                 >
-                    {(item) => (
-                        <List.Item key={item.url}>
-                            <List.Item.Meta
-                                avatar={<Avatar src={info[item.name]?.imgs}
-                                alt={item.name} />}
-                                title={item.name}
-                               
+                    {data.map((i, index) => (
+
+                        <div style={style} className="scroll" key={index}>
+                            {i.name}
+                            {console.log('third')}
+                            <img
+                                src={i[i.name].img}
+                                alt={i.name}
                             />
-                            
-                        </List.Item>
-                    )}
-                </VirtualList>
-            </List>
-            {contextHolder}
-            <Space>
-                <Button onClick={success}>Success</Button>
-            </Space>
-            {/* <div>
-                {dataState.slice(0, loadedItems).map((item) => {
-
-                    return <li key={item.url} className="element">
-                        <p>{item.name}</p>
-
-                        <img
-                            src={info[item.name]?.imgs}
-                            alt={item.name}
-                        />
-                    </li>
-                })}
-
-                {/* <button onClick={loadMoreItems}>Загрузить ещё</button> */}
-            {/*</div> */}
+                        </div>
+                    ))}
+                </InfiniteScroll>
+            </div>
         </>
     )
 }
