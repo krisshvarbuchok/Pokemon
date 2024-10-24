@@ -6,6 +6,9 @@ import ContentInfiniteScroll from './Content/ContentInfiniteScroll';
 import { fetchGetMoreAboutPokemon, fetchGetPokemon } from './redux/slice/listSlice';
 import { useEffect } from 'react';
 
+export const LIMIT = 5;
+export const OFFSET = 5;
+
 function App() {
   const navigation = useSelector(state => state.navigation);
   const dispatch = useDispatch();
@@ -13,7 +16,7 @@ function App() {
   console.log(data);
 
   useEffect(() => {
-      dispatch(fetchGetPokemon());
+      dispatch(fetchGetPokemon({limit: LIMIT, offset: OFFSET}));
     }, [dispatch]);
     useEffect(()=>{
       data.forEach(item => dispatch(fetchGetMoreAboutPokemon(item.url)))

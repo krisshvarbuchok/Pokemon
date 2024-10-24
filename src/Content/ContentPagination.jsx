@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchGetMoreAboutPokemon, fetchGetPokemon } from "../redux/slice/listSlice";
+import { clearInfo, fetchGetMoreAboutPokemon, fetchGetPokemon } from "../redux/slice/listSlice";
+import {LIMIT, OFFSET} from '../App';
 
 const ContentPagination = () => {
     const { data } = useSelector(state => state.list);
     console.log(data);
-   // const {count} = useSelector( state => state.list);
+    const {count} = useSelector( state => state.list);
    // console.log(count);
     
     const { info } = useSelector(state => state.list);
@@ -13,27 +14,31 @@ const ContentPagination = () => {
     console.log('info', info);
     const dispatch = useDispatch();
 
-    const itemsPerPage = 5;//элементов на странице
+    const itemsPerPage = LIMIT;//элементов на странице
     const [currentPage, setCurrentPage] = useState(1);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentItems = info.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(info.length / itemsPerPage);
+    //const startIndex = (currentPage - 1) * itemsPerPage;
+   // const endIndex = startIndex + itemsPerPage;
+   // const currentItems = info.slice(startIndex, endIndex);
+    const totalPages = Math.floor(count / itemsPerPage);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
+        console.log('object', {limit: LIMIT, offset: OFFSET * page});
+        dispatch(clearInfo())
+        dispatch(fetchGetPokemon({limit: LIMIT, offset: OFFSET * page}))
       };
+      
 
 
     return (
         <div className="list">
             <ul>
-                {currentItems.map(item => {
-                    return <li key={item.name} className="element">
+                {info.map(item => {
+                    return <li key={item[item.name.id]} className="element">
                         <p>{item.name}</p>
 
                         <img
-                            src={item[item.name]}
+                            src={item[item.name].img}
                             alt={item.name}
                         />
                     </li>
@@ -42,7 +47,7 @@ const ContentPagination = () => {
 
             </ul>
             <div className="page">
-                {currentItems.length !== 0 &&
+                {info.length !== 0 &&
                     <button onClick={() => handlePageChange(currentPage - 1)}
                         className="pageButton"
                         disabled={currentPage === 1}
@@ -58,7 +63,7 @@ const ContentPagination = () => {
                     </button>
 
                 ))}
-                {currentItems.length !== 0 &&
+                {info.length !== 0 &&
                     <button onClick={() => handlePageChange(currentPage + 1)}
                         className="pageButton"
                         disabled={currentPage === totalPages}
