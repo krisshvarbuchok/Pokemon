@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { Button, message, Space } from 'antd';
 
 
 const ContentInfiniteScroll = () => {
+    
+    const [messageApi, contextHolder] = message.useMessage();
     const [pokemon, setPokemon] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [offset, setOffset] = useState(0);
     const limit = 10; // Количество загружаемых элементов
+    const success = () => {
+        messageApi.open({
+            type: 'success',
+            content: '10 покемонов',
+        });
+    };
 
     const fetchPokemon = async () => {
         try {
@@ -18,13 +27,13 @@ const ContentInfiniteScroll = () => {
                 const pokemonResponse = await fetch(p.url);
                 return pokemonResponse.json();
             });
-
             const pokemonData = await Promise.all(pokemonDataPromises);
 
             // Обновляем состояние покемонов с изображениями
             setPokemon((prevPokemon) => [...prevPokemon, ...pokemonData]);
             setHasMore(data.results.length > 0); // Устанавливаем флаг, если есть еще покемоны
             setOffset((prevOffset) => prevOffset + limit); // Увеличиваем смещение для следующего запроса
+            success();
         } catch (error) {
             console.error("Ошибка при загрузке покемонов:", error);
             setHasMore(false); // В случае ошибки отключаем бесконечную прокрутку
@@ -35,9 +44,9 @@ const ContentInfiniteScroll = () => {
         fetchPokemon(); // Загружаем покемонов при первом рендере
     }, []);
 
-
     return (
         <div>
+            
             <InfiniteScroll
                 dataLength={pokemon.length}
                 next={fetchPokemon} // Функция загрузки следующей порции данных
@@ -51,6 +60,7 @@ const ContentInfiniteScroll = () => {
                         <span>{p.name}</span>
                     </div>
                 ))}
+                {contextHolder}
             </InfiniteScroll>
         </div>
     );
