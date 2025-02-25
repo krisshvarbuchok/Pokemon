@@ -1,0 +1,27 @@
+// @import "mixins";
+@use "mixins" as basa;
+%color{
+    color: deeppink;
+    border-color: deeppink;
+}
+// $c: deeppink;
+// $font-style: italic;
+// $font-size: 30px;
+// $font-weight: bold;
+$font: italic bold 50px Arial;
+$second: grey;
+.table{
+   @extend %color;
+    
+    border: 1px solid ;
+}
+.list{
+    @include basa.flex-center;
+     @include basa.theme($theme: darkblue);
+    ul{
+        background-color: $second;
+    }
+    div{
+        font: $font;
+    }
+}

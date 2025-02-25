@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearInfo, fetchGetPokemon } from "../redux/slice/listSlice";
 import {LIMIT, OFFSET} from '../App';
+import "../styles.scss";
 
 const ContentPagination = () => {
     //const { data } = useSelector(state => state.list);
@@ -34,7 +35,7 @@ const ContentPagination = () => {
         <div className="list">
             <ul>
                 {info.map(item => {
-                    return <li key={item[item.name].id} className="element">
+                    return <li key={item[item.name].id} className="element table">
                         <p>{item.name}</p>
 
                         <img
@@ -46,6 +47,7 @@ const ContentPagination = () => {
 
 
             </ul>
+            <div>hello</div>
             <div className="page">
                 {info.length !== 0 &&
                     <button onClick={() => handlePageChange(currentPage - 1)}
